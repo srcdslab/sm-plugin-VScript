@@ -50,7 +50,7 @@ public int FindEntityByClassnameWithin(int startEnt, const char[] classname, con
 
 public float TraceLine(const float[3] origin, const float[3] v2, int entity)
 {
-	Handle trace = TR_TraceRayFilterEx(origin, v2, MASK_NPCSOLID, RayType_EndPoint, TraceEntityFilterSelf, entity);
+	Handle trace = TR_TraceRayFilterEx(origin, v2, CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_MONSTERCLIP|CONTENTS_WINDOW, RayType_EndPoint, TraceEntityFilterSelf, entity);
 	float pos[3], dist = 1.0;
 	if(TR_DidHit(trace)){
 		TR_GetEndPosition(pos, trace);
