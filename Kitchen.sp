@@ -38,7 +38,12 @@ public void OnMapStart()
 		HookEvent("round_start", OnRoundStart, EventHookMode_PostNoCopy);
 		HookEvent("round_end", OnRoundEnd, EventHookMode_PostNoCopy);
 	}
-	
+	else
+    {
+        GetPluginFilename(INVALID_HANDLE, sCurMap, sizeof(sCurMap));
+
+        ServerCommand("sm plugins unload %s", sCurMap);
+    }
 }
 
 //Call Tick functions for all existing objects on each frame
