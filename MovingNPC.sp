@@ -169,7 +169,6 @@ public bool IsMovingNpcExists(int entity)
 
 public void KillNpc(MovingNpc npc)
 {
-	LogMessage("Killing npc, attachment %d", npc.entity);
 	for(int i = 0; i < g_aMovingNpc.Length; ++i)
 	{
 		MovingNpc cur = g_aMovingNpc.Get(i);
@@ -193,7 +192,6 @@ public Action OnMovingNpcTimeout(Handle timer, MovingNpc npc)
 
 public void StartNpc(MovingNpc npc)
 {
-	LogMessage("Starting npc, attachment %d", npc.entity);
 	npc.Start();
 	if(npc.lifetime > 0 && !npc.lifetimer)
 		npc.lifetimer = CreateTimer(npc.lifetime, OnMovingNpcTimeout, npc, TIMER_FLAG_NO_MAPCHANGE);
@@ -324,7 +322,6 @@ public void OnMapStart()
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast)
 {
-	LogMessage("Trying to find not templated npcs");
 	for(int i = 0; i < g_aNpcConfigNT.Length; ++i)
 	{
 		MovingNpcConfig NpcConf = g_aNpcConfigNT.Get(i);
@@ -337,15 +334,12 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast)
 		{
 			if(IsMovingNpcExists(thruster_fwd))
 				continue;
-			LogMessage("Found thruster fwd %d", thruster_fwd);
 			do {
 				thruster_side = GetEntityIndex(thruster_side, sThrusterSide, "phys_thruster");
-				LogMessage("Found thruster side %d", thruster_side);
 			} while (thruster_side != -1 && IsMovingNpcExists(thruster_side));
 			
 			do {
 				attachment = GetEntityIndex(attachment, sAttachment);
-				LogMessage("Found attachment %d", attachment);
 			} while (attachment != -1 && IsMovingNpcExists(attachment));
 
 			if(thruster_side != -1 && attachment != -1)
@@ -358,9 +352,7 @@ public void OnRoundStart(Event event, const char[] name, bool dontBroadcast)
 
 stock void NewMovingNpc(MovingNpcConfig NpcConf, int attachment, int thruster_fwd, int thruster_side)
 {
-	LogMessage("Trying to create new moving npc");
 	MovingNpc npc = new MovingNpc(attachment, NpcConf.rate, NpcConf.distance, NpcConf.retarget, NpcConf.forward_factor, NpcConf.turning_factor, NpcConf.lifetime);
-	LogMessage("New moving npc created, attachment %d, thruster_fwd %d, thruster_side %d", attachment, thruster_fwd, thruster_side);
 	npc.SetThruster(true, thruster_fwd);
 	npc.SetThruster(false, thruster_side);
 	StartNpc(npc);
@@ -380,7 +372,6 @@ public void Vscritps_OnTemplateInstanceCreated(int template, const int[] created
 			return;
 		}
 	}
-	LogMessage("Template %s created an instance", sTemplate);
 	for(int i = 0; i < configs.Length; ++i)
 	{
 		int attachment = -1, thruster_fwd = -1, thruster_side = -1;
@@ -420,7 +411,6 @@ public void OnEntityDestroyed(int entity)
 		MovingNpc npc = g_aMovingNpc.Get(i);
 		if(npc.entity == entity || npc.tf == entity || npc.ts == entity)
 		{	
-			LogMessage("Npc died, attachment %d thruster_fwd %d thruster_side %d", npc.entity, npc.tf, npc.ts);
 			npc.Stop();
 			npc.kill = true;
 			g_aMovingNpc.Erase(i);
