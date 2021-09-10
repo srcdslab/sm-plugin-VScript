@@ -1,7 +1,7 @@
 #pragma semicolon 1
 
 #define PLUGIN_AUTHOR "Cloud Strife"
-#define PLUGIN_VERSION "1.1"
+#define PLUGIN_VERSION "1.2"
 #define MAP_NAME "ze_Kitchen_v2s"
 
 #include <sourcemod>
@@ -69,15 +69,15 @@ public void OnGameFrame()
 
 public void OnRoundStart(Event event, const char[] name, bool dontBroadcast)
 {
-	int tmp = GetEntityIndexByHammerID(1208341, "trigger_multiple");
+	int tmp = Vscripts_GetEntityIndexByHammerID(1208341, "trigger_multiple");
 	HookSingleEntityOutput(tmp, "OnUser1", OnFlyStart, true);
 	HookSingleEntityOutput(tmp, "OnUser2", OnAddFlyHP);
 	HookSingleEntityOutput(tmp, "OnStartTouch", OnFlyInit, true);
 	
-	tmp = GetEntityIndexByName("fly_end", "prop_dynamic");
+	tmp = Vscripts_GetEntityIndexByName("fly_end", "prop_dynamic");
 	HookSingleEntityOutput(tmp, "OnUser1", OnFlyEndInit, true);
 	
-	tmp = GetEntityIndexByName("stage3_konec_relay", "logic_relay");
+	tmp = Vscripts_GetEntityIndexByName("stage3_konec_relay", "logic_relay");
 	HookSingleEntityOutput(tmp, "OnTrigger", OnMicrowaveInit, true);
 }
 
@@ -96,13 +96,13 @@ public void OnButtonPressed(const char[] output, int caller, int activator, floa
 	g_iButton_players.GetValue(sButtonKey, val);
 	if(val == activator)
 	{
-		EntFireByIndex(caller, "FireUser1", "", "0.00", -1);
+		Vscripts_EntFireByIndex(caller, "FireUser1", "", 0.0, -1);
 	}
 }
 
 public void OnMicrowaveInit(const char[] output, int caller, int activator, float delay)
 {
-	int entity = GetEntityIndexByName("mikrovlnka_model", "prop_dynamic");
+	int entity = Vscripts_GetEntityIndexByName("mikrovlnka_model", "prop_dynamic");
 	if(!IsValidEntity(entity)) return;
 	
 	g_Microwave = new Microwave(entity);
@@ -116,12 +116,14 @@ public void OnMicrowaveInit(const char[] output, int caller, int activator, floa
 
 public void OnMicrowaveLaserHit2(const char[] output, int caller, int activator, float delay)
 {
-	g_Microwave.Hit(80);
+	if(g_Microwave)
+		g_Microwave.Hit(80);
 }
 
 public void OnMicrowaveLaserHit1(const char[] output, int caller, int activator, float delay)
 {
-	g_Microwave.Hit(70);
+	if(g_Microwave)
+		g_Microwave.Hit(70);
 }
 
 public void OnMicrowaveStart(const char[] output, int caller, int activator, float delay)
@@ -138,12 +140,14 @@ public Action Microwave_StartDelay(Handle timer)
 
 public void OnMicrowaveTakeDamage(const char[] output, int caller, int activator, float delay)
 {
-	g_Microwave.Hit(1);
+	if(g_Microwave)
+		g_Microwave.Hit(1);
 }
 
 public void OnMicrowaveAddHP(const char[] output, int caller, int activator, float delay)
 {
-	g_Microwave.AddHealth(200);
+	if(g_Microwave)
+		g_Microwave.AddHealth(200);
 }
 
 public void OnFlyDeadTrigger(const char[] output, int caller, int activator, float delay)
@@ -151,17 +155,17 @@ public void OnFlyDeadTrigger(const char[] output, int caller, int activator, flo
 	if(!g_Fly) return;
 	
 	float orig[3], angles[3];
-	GetOrigin(g_Fly.entity, orig);
-	GetAngles(g_Fly.entity, angles);
-	SetOrigin(caller, orig);
-	SetAngles(caller, angles);
+	Vscripts_GetOrigin(g_Fly.entity, orig);
+	Vscripts_GetAngles(g_Fly.entity, angles);
+	Vscripts_SetOrigin(caller, orig);
+	Vscripts_SetAngles(caller, angles);
 	UnhookSingleEntityOutput(g_Fly.entity, "OnUser1", OnChangeEggsCount);
 	UnhookSingleEntityOutput(g_Fly.entity, "OnTakeDamage", OnFlyTakeDamage);
 	UnhookSingleEntityOutput(g_Fly.entity, "OnUser2", OnSetReturn);
 	g_Fly.KillFly();
 	g_Fly = null;
-	EntFireByIndex(caller, "SetAnimation", "dead", "0.0", -1);
-	EntFireByIndex(caller, "SetAnimation", "dead_loop", "2.0", -1);
+	Vscripts_EntFireByIndex(caller, "SetAnimation", "dead", 0.0, -1);
+	Vscripts_EntFireByIndex(caller, "SetAnimation", "dead_loop", 2.0, -1);
 }
 
 //public void OnFlyEndHovnoInit1(const char[] output, int caller, int activator, float delay)
@@ -207,7 +211,7 @@ public void OnFlyEndInit(const char[] output, int caller, int activator, float d
 
 public void OnFlyInit(const char[] output, int caller, int activator, float delay)
 {
-	int fly = GetEntityIndexByName("fly", "prop_dynamic");
+	int fly = Vscripts_GetEntityIndexByName("fly", "prop_dynamic");
 	if(!IsValidEntity(fly)) return;
 	
 	g_Fly = new Fly(fly);
@@ -216,18 +220,20 @@ public void OnFlyInit(const char[] output, int caller, int activator, float dela
 	HookSingleEntityOutput(fly, "OnTakeDamage", OnFlyTakeDamage);
 	HookSingleEntityOutput(fly, "OnUser2", OnSetReturn);
 	
-	int tmp = GetEntityIndexByName("fly_dead", "prop_dynamic");
+	int tmp = Vscripts_GetEntityIndexByName("fly_dead", "prop_dynamic");
 	HookSingleEntityOutput(tmp, "OnUser1", OnFlyDeadTrigger, true);
 }
 
 public void OnFlyTakeDamage(const char[] output, int caller, int activator, float delay)
 {
-	g_Fly.Hit();	
+	if(g_Fly)
+		g_Fly.Hit();	
 }
 
 public void OnSetReturn(const char[] output, int caller, int activator, float delay)
 {
-	g_Fly.SetReturn(true);
+	if(g_Fly)
+		g_Fly.SetReturn(true);
 }
 
 public void OnFlyStart(const char[] output, int caller, int activator, float delay)
@@ -242,7 +248,8 @@ public void OnAddFlyHP(const char[] output, int caller, int activator, float del
 
 public void OnChangeEggsCount(const char[] output, int caller, int activator, float delay)
 {
-	g_Fly.IncrementEggCount(-1);
+	if(g_Fly)
+		g_Fly.IncrementEggCount(-1);
 }
 
 public void OnEntitySpawned(int entity, const char[] classname)
