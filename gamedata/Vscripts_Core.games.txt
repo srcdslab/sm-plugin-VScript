@@ -1,0 +1,53 @@
+"Games"
+{
+	"cstrike"
+	{
+		"Offsets"
+		{
+			"CUtlVector::m_iSize"
+			{
+				"linux"	"12"
+			}
+		}
+		"Addresses"
+		{
+			"modelinfo"
+			{
+				"linux"
+				{
+					"signature" "modelinfo"
+				}
+			}
+			"CPointTemplate::CreateInstance"
+			{
+				"linux"
+				{
+					"signature" "CPointTemplate::CreateInstance"
+				}
+			}
+		}
+		"Signatures"
+		{
+			"CBaseEntity::GetModel"
+			{
+				"library"	"server"
+				"linux"		"@_ZN11CBaseEntity8GetModelEv"
+			}
+			"modelinfo"
+			{
+				"library"	"engine"
+				"linux"		"@_ZL17g_ModelInfoServer"
+			}
+			"CModelInfo::GetModelType"
+			{
+				"library"	"engine"
+				"linux"		"@_ZNK10CModelInfo12GetModelTypeEPK7model_t"
+			}
+			"CPointTemplate::CreateInstance"
+			{
+				"library"	"server"
+				"linux"		"@_ZN14CPointTemplate14CreateInstanceERK6VectorRK6QAngleP10CUtlVectorIP11CBaseEntity10CUtlMemoryIS8_iEE"
+			}
+		}
+	}
+}

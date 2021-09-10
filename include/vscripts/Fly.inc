@@ -238,11 +238,11 @@ methodmap Fly_base < Basic
 		SubtractVectors(target, fly, targetDir);
 		NormalizeVector(targetDir, targetDir);
 		float currentDir[3];
-		GetForwardVector(this.entity, currentDir);
+		Vscripts_GetForwardVector(this.entity, currentDir);
 		float dir[3];
 		GetNewDir(this, targetDir, currentDir, dir);
 		dir[2] = targetDir[2];
-		SetForwardVector(this.entity, dir);
+		Vscripts_SetForwardVector(this.entity, dir);
 		MoveForward(this, this.blocker1, this.blocker2);
 	}
 }
@@ -298,13 +298,13 @@ methodmap Fly_Small < Fly_base
 	{
 		
 		float currentAngle[3];
-		GetForwardVector(this.entity, currentAngle);
+		Vscripts_GetForwardVector(this.entity, currentAngle);
 		currentAngle[2] = 0.0;
-		SetForwardVector(this.entity, currentAngle);
+		Vscripts_SetForwardVector(this.entity, currentAngle);
 		float orig[3];
-		GetOrigin(this.entity, orig);
+		Vscripts_GetOrigin(this.entity, orig);
 		orig[2] += 40.0;
-		SetOrigin(this.entity, orig);
+		Vscripts_SetOrigin(this.entity, orig);
 		
 		this.started = true;
 	}
@@ -313,18 +313,18 @@ methodmap Fly_Small < Fly_base
 	{
 		
 		float flyPos[3], flyPos_copy[3];
-		GetOrigin(this.entity, flyPos);
-		GetOrigin(this.entity, flyPos_copy);
+		Vscripts_GetOrigin(this.entity, flyPos);
+		Vscripts_GetOrigin(this.entity, flyPos_copy);
 		flyPos_copy[2] -= 300.0;
 		if (this.dead)
-		{
-			float distToFloor = TraceLine(flyPos, flyPos_copy, this.entity);
+		{	
+			float distToFloor = Vscripts_TraceLine(flyPos, flyPos_copy, this.entity);
 			if (distToFloor < 0.03)
 			{
 				
-				EntFireByIndex(this.entity, "SetAnimation", "dead", "0.0", -1);
-				EntFireByIndex(this.entity, "SetAnimation", "dead_loop", "2.0", -1);
-				EntFireByIndex(this.entity, "kill", "", "20.0", -1);
+				Vscripts_EntFireByIndex(this.entity, "SetAnimation", "dead", 0.0, -1);
+				Vscripts_EntFireByIndex(this.entity, "SetAnimation", "dead_loop", 2.0, -1);
+				Vscripts_EntFireByIndex(this.entity, "kill", "", 20.0, -1);
 				this.started = false;
 				return;
 			}
@@ -348,7 +348,7 @@ methodmap Fly_Small < Fly_base
 			
 			this.target = GetNewTarget(this);
 			flyPos_copy[2] += 400.0;
-			if (this.target == -1 && TraceLine(flyPos, flyPos_copy, this.entity) >= 1.0)
+			if (this.target == -1 && Vscripts_TraceLine(flyPos, flyPos_copy, this.entity) >= 1.0)
 			{
 				MoveDir(this, {0.0, 0.0, 1.0});
 			}
@@ -493,7 +493,7 @@ methodmap Fly < Fly_Small
 			if (IsValidPlayer(this.grabbed_players.Get(i)))
 			{
 				if(GetClientTeam(this.grabbed_players.Get(i)) == 3)
-					SetOrigin(this.grabbed_players.Get(i), position);
+					Vscripts_SetOrigin(this.grabbed_players.Get(i), position);
 			}
 		}	
 	}
@@ -507,7 +507,7 @@ methodmap Fly < Fly_Small
 	{
 		this.max_spawned_eggs = this.players_in_arena / 6;
 		this.started = true;
-		EntFireByIndex(this.entity, "SetAnimation", "fly", "0.00", -1);
+		Vscripts_EntFireByIndex(this.entity, "SetAnimation", "fly", 0.00, -1);
 	}
 	
 	public void KillFly()
@@ -520,10 +520,10 @@ methodmap Fly < Fly_Small
 	public void Tick()
 	{
 		float flyPos[3], flyPos_copy[3];
-		GetOrigin(this.entity, flyPos);
-		GetOrigin(this.entity, flyPos_copy);
+		Vscripts_GetOrigin(this.entity, flyPos);
+		Vscripts_GetOrigin(this.entity, flyPos_copy);
 		flyPos_copy[2] -= 300.0;
-		float distToFloor = TraceLine(flyPos, flyPos_copy, this.entity);
+		float distToFloor = Vscripts_TraceLine(flyPos, flyPos_copy, this.entity);
 		
 		/*****************************/
 		/*** Stuff done every tick ***/
@@ -532,11 +532,11 @@ methodmap Fly < Fly_Small
 		/*** Grab a near player ***/
 		int playerNear;
 		float point[3], fwd[3];
-		GetForwardVector(this.entity, fwd);
+		Vscripts_GetForwardVector(this.entity, fwd);
 		ScaleVector(fwd, 80.0);
 		AddVectors(flyPos, fwd, point);
 		
-		if(!this.dead && (playerNear = FindEntityByClassnameWithin(playerNear, "player", point, 64.0)) != -1)
+		if(!this.dead && (playerNear = Vscripts_FindEntityByClassnameWithin(playerNear, "player", point, 64.0)) != -1)
 		{
 			if(GetClientTeam(playerNear) == 3)
 			{
@@ -548,7 +548,7 @@ methodmap Fly < Fly_Small
 					if ((this.target = GetNewTarget(this)) == -1 || !this.IsValidTarget())
 						this.return_to_toaster = true;
 					else if (!this.grabbed_player)
-						EntFireByIndex(this.entity, "FireUser2", "", "15.0", -1);
+						Vscripts_EntFireByIndex(this.entity, "FireUser2", "", 15.0, -1);
 					if (playerNear == this.target)
 						this.target = -1;
 		
@@ -580,8 +580,8 @@ methodmap Fly < Fly_Small
 			
 			if (distToFloor < 0.05)
 			{
-				EntFire("fly_dead", "FireUser1", "", "0.00", -1);
-				EntFire("fly", "Kill", "", "0.02", -1);
+				Vscripts_EntFire("fly_dead", "FireUser1", "", 0.00, -1);
+				Vscripts_EntFire("fly", "Kill", "", 0.02, -1);
 				return;
 			}
 			else
@@ -595,7 +595,7 @@ methodmap Fly < Fly_Small
 		{
 			this.spawn_eggs = false;
 			this.eggs_currently_spawned++;
-			int eggSpawner = GetEntityIndexByHammerID(1248969, "env_entity_maker");
+			int eggSpawner = Vscripts_GetEntityIndexByHammerID(1248969, "env_entity_maker");
 			TeleportEntity(eggSpawner, flyPos, { 0.0, 0.0, 0.0 }, NULL_VECTOR);
 			AcceptEntityInput(eggSpawner, "ForceSpawn");
 		}
@@ -635,7 +635,7 @@ methodmap Fly < Fly_Small
 			if (!this.IsValidTarget())
 				this.target = -1;
 			flyPos_copy[2] += 140;
-			if (this.target == -1 && TraceLine(flyPos, flyPos_copy, this.entity) >= 1.0)
+			if (this.target == -1 && Vscripts_TraceLine(flyPos, flyPos_copy, this.entity) >= 1.0)
 				MoveDir(this, { 0.0, 0.0, 1.0 } );
 		}
 	}
@@ -658,16 +658,16 @@ methodmap Fly < Fly_Small
 			this.health--;
 			char param[256];
 			Format(param, sizeof(param), "message Fly %i HP", this.health);
-			EntFire("fly_text", "AddOutput", param, "0.0", -1);
-			EntFire("fly_text", "Display", "", "0.01", -1);
+			Vscripts_EntFire("fly_text", "AddOutput", param, 0.0, -1);
+			Vscripts_EntFire("fly_text", "Display", "", 0.01, -1);
 		}
 		
 		if (this.health == 0 && !this.dead)
 		{
-			EntFire("fly_dead_relay", "Trigger", "", "0.0", -1);
+			Vscripts_EntFire("fly_dead_relay", "Trigger", "", 0.0, -1);
 			this.dead = true;
 			float flyPos[3];
-			GetOrigin(this.entity, flyPos);
+			Vscripts_GetOrigin(this.entity, flyPos);
 			flyPos[2] += 160.0;
 			this.TeleportGrabbedPlayers(flyPos);	
 			this.grabbed_player = false;
@@ -688,7 +688,7 @@ methodmap Fly_End < Fly_base
 	{
 		Fly_base myclass = new Fly_base(entity);
 		myclass.blocker1 = 60.0;
-		myclass.blocker2 = 60.0;
+		myclass.blocker2 = 110.0;
 		myclass.rot_speed_max = 0.02;
 		myclass.rot_speed_min = 0.005;
 		myclass.speed_acceleration = 0.05;
@@ -739,7 +739,7 @@ methodmap Fly_End < Fly_base
 			if (IsValidPlayer(this.grabbed_players.Get(i)))
 			{
 				if(GetClientTeam(this.grabbed_players.Get(i)) == 3)
-					SetOrigin(this.grabbed_players.Get(i), position);
+					Vscripts_SetOrigin(this.grabbed_players.Get(i), position);
 			}
 		}	
 	}
@@ -752,31 +752,31 @@ methodmap Fly_End < Fly_base
 	
 	public void Start()
 	{
-		EntFireByIndex(this.entity, "SetAnimation", "fly", "0.00", -1);
+		Vscripts_EntFireByIndex(this.entity, "SetAnimation", "fly", 0.0, -1);
 		this.started = true;
 	}
 	public void Tick()
 	{
 		float flyPos[3], flyPos_copy[3];
-		GetOrigin(this.entity, flyPos);
-		GetOrigin(this.entity, flyPos_copy);
+		Vscripts_GetOrigin(this.entity, flyPos);
+		Vscripts_GetOrigin(this.entity, flyPos_copy);
 		float targetNode[3];
 		MakeVectorFromPoints( { 0.0, 0.0, 0.0 }, TARGET_NODES[this.current_node], targetNode);
 		int playerNear;
 		float point[3], fwd[3];
-		GetForwardVector(this.entity, fwd);
+		Vscripts_GetForwardVector(this.entity, fwd);
 		ScaleVector(fwd, 80.0);
 		AddVectors(flyPos, fwd, point);
 	
 		/*** Kill nearby physboxes ***/
 		int physbox;
-		if ((physbox = FindEntityByClassnameWithin(physbox, "func_physbox", flyPos, 350.0)) != -1)
+		if ((physbox = Vscripts_FindEntityByClassnameWithin(physbox, "func_physbox", flyPos, 350.0)) != -1)
 		{
-			EntFireByIndex(physbox, "FireUser2", "", "0.00", -1);
+			Vscripts_EntFireByIndex(physbox, "FireUser2", "", 0.0, -1);
 		}
 	
 		/*** Grab a near player ***/
-		if((playerNear = FindEntityByClassnameWithin(playerNear, "player", point, 100.0)) != -1)
+		if((playerNear = Vscripts_FindEntityByClassnameWithin(playerNear, "player", point, 100.0)) != -1)
 		{	
 			if(GetClientTeam(playerNear) == 3)
 			{
@@ -787,7 +787,7 @@ methodmap Fly_End < Fly_base
 			}
 		}
 	
-		if((playerNear = FindEntityByClassnameWithin(playerNear, "player", point, 100.0)) != -1)
+		if((playerNear = Vscripts_FindEntityByClassnameWithin(playerNear, "player", point, 100.0)) != -1)
 		{	
 			if(GetClientTeam(playerNear) == 3)
 			{
@@ -817,20 +817,20 @@ methodmap Fly_End < Fly_base
 			}
 			else
 			{
-				EntFireByIndex(this.entity, "SetAnimation", "idle", "0.00", -1);
-				EntFireByIndex(this.entity, "SetAnimation", "attack", "2.00", -1);
-				EntFire("boss_fly_sound_end", "StopSound", "", "0.00", -1);
-				//EntFire("4_fly_hovno", "FireUser1", "", "0.50", -1);
-				//EntFire("5_fly_hovno", "FireUser1", "", "0.50", -1);
-				//EntFire("fly_hovno_sound4", "PlaySound", "", "0.50", -1);
-				//EntFire("fly_hovno_sound5", "PlaySound", "", "0.50", -1);
+				Vscripts_EntFireByIndex(this.entity, "SetAnimation", "idle", 0.0, -1);
+				Vscripts_EntFireByIndex(this.entity, "SetAnimation", "attack", 2.0, -1);
+				Vscripts_EntFire("boss_fly_sound_end", "StopSound", "", 0.0, -1);
+				//Vscripts_EntFire("4_fly_hovno", "FireUser1", "", "0.50", -1);
+				//Vscripts_EntFire("5_fly_hovno", "FireUser1", "", "0.50", -1);
+				//Vscripts_EntFire("fly_hovno_sound4", "PlaySound", "", "0.50", -1);
+				//Vscripts_EntFire("fly_hovno_sound5", "PlaySound", "", "0.50", -1);
 				flyPos_copy[2] += 200;
 				this.TeleportGrabbedPlayers(flyPos_copy);
 				this.grabbed_players.Clear();
 				float angles[3];
-				GetForwardVector(this.entity, angles);
+				Vscripts_GetForwardVector(this.entity, angles);
 				angles[2] = 0.0;
-				SetForwardVector(this.entity, angles);
+				Vscripts_SetForwardVector(this.entity, angles);
 				this.end = true;
 				this.started = false;
 				return;
@@ -887,15 +887,15 @@ methodmap Fly_End < Fly_base
 	//{
 		//this.path = p;
 		//this.stop_on_last_node = stop;
-		//EntFireByIndex(this.entity, "SetAnimation", "fly", "0.00", -1);
+		//Vscripts_EntFireByIndex(this.entity, "SetAnimation", "fly", "0.00", -1);
 		//CreateTimer(0.0, Tick_Cb, this, TIMER_FLAG_NO_MAPCHANGE);
 	//}
 	//
 	//public void Tick()
 	//{
 		//float flyPos[3], flyPos_copy[3];
-		//GetOrigin(this.entity, flyPos);
-		//GetOrigin(this.entity, flyPos_copy);
+		//Vscripts_GetOrigin(this.entity, flyPos);
+		//Vscripts_GetOrigin(this.entity, flyPos_copy);
 		//float targetNode[3];
 		//MakeVectorFromPoints( { 0.0, 0.0, 0.0 }, TARGET_NODES2[this.path][this.current_node], targetNode);
 		//flyPos_copy[2] -= 40;
@@ -921,13 +921,13 @@ methodmap Fly_End < Fly_base
 				//}
 				//else if (this.stop_on_last_node)
 				//{
-					//EntFireByIndex(this.entity, "SetAnimation", "idle", "0.00", -1);
+					//Vscripts_EntFireByIndex(this.entity, "SetAnimation", "idle", "0.00", -1);
 					//flyPos_copy[2] += 200.0;
 					//this.TeleportGrabbedPlayers(flyPos_copy);
 					//float angles[3]; 
-					//GetForwardVector(this.entity, angles);
+					//Vscripts_GetForwardVector(this.entity, angles);
 					//angles[2] = 0.0;
-					//SetForwardVector(this.entity, angles);
+					//Vscripts_SetForwardVector(this.entity, angles);
 					//this.end = true;
 					//return;
 				//}
@@ -946,7 +946,7 @@ public void ChasePlayer(Fly_Small fly, const float[3] flyPos)
 {
 	fly.retarget -= 0.01;
 	float targetPos[3];
-	GetOrigin(fly.target, targetPos);
+	Vscripts_GetOrigin(fly.target, targetPos);
 	targetPos[2] += 48;
 
 	// Fast approx of distance without needing sqrt
@@ -960,12 +960,11 @@ public void ChasePlayer(Fly_Small fly, const float[3] flyPos)
 		fly.MoveTowardsTarget(flyPos, targetPos);
 		fly.previous_distance_to_target = fly.current_distance_to_target;
 	}
-	
 }
 
 public bool IsTargetInSight(int entity, const float[3] flyPos, const float[3] targetPos)
 {
-	return TraceLine(flyPos, targetPos, entity) >= 1.0;    
+	return Vscripts_TraceLine(flyPos, targetPos, entity) >= 1.0;    
 }
 
 
@@ -984,8 +983,8 @@ public int GetNewTarget(Fly_Small fly)
 		if(GetClientTeam(player) == 3)
 		{
 			float playerPos[3], selfPos[3];
-			GetOrigin(fly.entity, selfPos);
-			GetOrigin(player, playerPos);
+			Vscripts_GetOrigin(fly.entity, selfPos);
+			Vscripts_GetOrigin(player, playerPos);
 			playerPos[2] += 48;
 			if(IsTargetInSight(fly.entity, selfPos, playerPos))
 				playerArr.Push(player);
@@ -996,13 +995,11 @@ public int GetNewTarget(Fly_Small fly)
 		fly.retarget = 8;
 		int target = playerArr.Get(GetRandomInt(0, playerArr.Length - 1));
 		delete playerArr;
-		
 		return target;
 	}
 	else
 	{
 		delete playerArr;
-		
 		return -1;
 	}
 }
@@ -1010,15 +1007,15 @@ public int GetNewTarget(Fly_Small fly)
 public void MoveForward(Fly_base fly, float blocker1, float blocker2)
 {
 	float pos1[3], pos2[3], selfPos[3], selfFwd[3];
-	GetOrigin(fly.entity, selfPos);
-	GetForwardVector(fly.entity, selfFwd);
+	Vscripts_GetOrigin(fly.entity, selfPos);
+	Vscripts_GetForwardVector(fly.entity, selfFwd);
 	ScaleVector(selfFwd, blocker1);
 	AddVectors(selfPos, selfFwd, pos1);
-	GetForwardVector(fly.entity, selfFwd);
+	Vscripts_GetForwardVector(fly.entity, selfFwd);
 	ScaleVector(selfFwd, blocker2);
 	AddVectors(selfPos, selfFwd, pos2);
 	
-	if (TraceLine(pos1, pos2, fly.entity) < 1.0)
+	if (Vscripts_TraceLine(pos1, pos2, fly.entity) < 1.0)
 	{
 		
 		fly.speed = 0.0;
@@ -1026,10 +1023,10 @@ public void MoveForward(Fly_base fly, float blocker1, float blocker2)
 	else
 	{
 		float newpos[3];
-		GetForwardVector(fly.entity, selfFwd);
+		Vscripts_GetForwardVector(fly.entity, selfFwd);
 		ScaleVector(selfFwd, fly.speed);
 		AddVectors(selfPos, selfFwd, newpos);
-		SetOrigin(fly.entity, newpos);
+		Vscripts_SetOrigin(fly.entity, newpos);
 	}
 }
 
@@ -1040,13 +1037,13 @@ public void MoveDir(Fly_base fly, float[3] dir)
 	dir_copy[0] = dir[0];
 	dir_copy[1] = dir[1];
 	dir_copy[2] = dir[2];
-	GetForwardVector(fly.entity, currentAngle);
+	Vscripts_GetForwardVector(fly.entity, currentAngle);
 	currentAngle[2] = 0.0;
-	SetForwardVector(fly.entity, currentAngle);
-	GetOrigin(fly.entity, origin);
+	Vscripts_SetForwardVector(fly.entity, currentAngle);
+	Vscripts_GetOrigin(fly.entity, origin);
 	ScaleVector(dir_copy, fly.speed / 4.0);
 	AddVectors(origin, dir_copy, newpos);
-	SetOrigin(fly.entity, newpos);
+	Vscripts_SetOrigin(fly.entity, newpos);
 }
 
 public void GetNewDir(Fly_base fly, const float[3] targetDir, const float[3] currentDir, float[3] newDir)
@@ -1185,13 +1182,13 @@ methodmap Microwave < Basic
 			}
 			char msg[250];
 			Format(msg, sizeof(msg), "message Microwave %d HP", this.health);
-			EntFire("fly_text", "AddOutput", msg, "0.0", -1);
-			EntFire("fly_text", "Display", "", "0.01", -1);
+			Vscripts_EntFire("fly_text", "AddOutput", msg, 0.0, -1);
+			Vscripts_EntFire("fly_text", "Display", "", 0.01, -1);
 		}
 		
 		if (this.health <= 0 && !this.dead)
 		{
-			EntFire("microwave_dead_relay", "Trigger", "", "0.0", -1);
+			Vscripts_EntFire("microwave_dead_relay", "Trigger", "", 0.0, -1);
 			this.dead = true;
 		}
 	}
