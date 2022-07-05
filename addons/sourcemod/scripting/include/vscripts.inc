@@ -30,7 +30,7 @@ public int GetEntityIndexByName(const char[] name, const char[] classname){
 	return -1;
 }
 
-public int FindEntityByClassnameWithin(int startEnt, const char[] classname, const float[3] origin, const float radius){ //Tested. Works properly.
+public int FindEntityByClassnameWithin(int startEnt, const char[] classname, const float origin[3], const float radius){ //Tested. Works properly.
 	float torigin[3];
 	while((startEnt = FindEntityByClassname(startEnt,classname))!= -1){
 		GetOrigin(startEnt, torigin);
@@ -39,7 +39,7 @@ public int FindEntityByClassnameWithin(int startEnt, const char[] classname, con
 	return -1;
 }
 
-public float TraceLine(const float[3] origin, const float[3] v2, int entity){		//Tested. Works properly
+public float TraceLine(const float origin[3], const float v2[3], int entity){		//Tested. Works properly
 	Handle trace = TR_TraceRayFilterEx(origin, v2, CONTENTS_SOLID, RayType_EndPoint, TraceEntityFilterSelf, entity);
 	float pos[3], dist = 1.0;
 	if(TR_DidHit(trace)){
@@ -55,27 +55,27 @@ public bool TraceEntityFilterSelf(int entity, int contentsMask, any data)
 	return (data != entity && entity > 64);
 } 
 
-public void GetOrigin(int entity, float[3] buffer){ 			//Tested. Works properly.
+public void GetOrigin(int entity, float buffer[3]){ 			//Tested. Works properly.
 	if(IsValidEntity(entity))
 		GetEntPropVector(entity, Prop_Send, "m_vecOrigin", buffer);
 }
 
-public void GetAngles(int entity, float[3] buffer){				//Gives you wrong values after spawn it via env_entity_maker
+public void GetAngles(int entity, float buffer[3]){				//Gives you wrong values after spawn it via env_entity_maker
 	if(IsValidEntity(entity))
 		GetEntPropVector(entity, Prop_Send, "m_angRotation", buffer);
 }
 
-public void SetAngles(int entity, const float[3] buffer){	//Tested. Works properly.
+public void SetAngles(int entity, const float buffer[3]){	//Tested. Works properly.
 	if(IsValidEntity(entity))
 		TeleportEntity(entity, NULL_VECTOR, buffer, NULL_VECTOR);
 }
 
-public void SetOrigin(int entity, const float[3] buffer){	//Tested. Works properly.
+public void SetOrigin(int entity, const float buffer[3]){	//Tested. Works properly.
 	if(IsValidEntity(entity))
 		TeleportEntity(entity, buffer, NULL_VECTOR, NULL_VECTOR);
 }
 
-public void GetForwardVector(int entity, float[3] buffer)	//Tested. Works properly.
+public void GetForwardVector(int entity, float buffer[3])	//Tested. Works properly.
 {
 	if(IsValidEntity(entity))
 	{
@@ -85,7 +85,7 @@ public void GetForwardVector(int entity, float[3] buffer)	//Tested. Works proper
 	}
 }
 
-public void SetForwardVector(int entity, const float[3] buffer)	//Tested. Works properly.
+public void SetForwardVector(int entity, const float buffer[3])	//Tested. Works properly.
 {
 	if(IsValidEntity(entity))
 	{
@@ -134,4 +134,5 @@ public Action InputDelay(Handle timer, DataPack data)
 		SetVariantString(parametr);
 		AcceptEntityInput(target, input, activator);
 	}
+	return Plugin_Continue;
 }
