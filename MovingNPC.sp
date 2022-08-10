@@ -361,6 +361,9 @@ stock void NewMovingNpc(MovingNpcConfig NpcConf, int attachment, int thruster_fw
 
 public void Vscritps_OnTemplateInstanceCreated(int template, const int[] createdEntities, int size)
 {
+	if(!g_mNpcConfig)
+		return;
+	
 	char sTemplate[MAX_ENT_NAME];
 	GetEntName(template, sTemplate, sizeof(sTemplate));
 	ArrayList configs;
