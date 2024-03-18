@@ -1,8 +1,5 @@
 #pragma semicolon 1
 
-#define PLUGIN_AUTHOR "Cloud Strife"
-#define PLUGIN_VERSION "1.00"
-
 #include <sourcemod>
 #include <vscripts>
 #include <dhooks>
@@ -11,10 +8,10 @@
 
 public Plugin myinfo = 
 {
-	name = "Vscripts Core",
-	author = PLUGIN_AUTHOR,
+	name = "VScripts Core",
+	author = "Cloud Strife",
 	description = "",
-	version = PLUGIN_VERSION,
+	version = "1.0.0",
 	url = "https://steamcommunity.com/id/cloudstrifeua/"
 };
 
@@ -193,13 +190,13 @@ public void OnAllPluginsLoaded()
 	g_bEventQueue = LibraryExists("Entity Events Queue");
 }
 
-//public void OnLibraryAdded(const char[] name)
-//{
-	//if(StrEqual(name, "Entity Events Queue"))
-	//{
-		//g_bEventQueue = true;
-	//}
-//}
+public void OnLibraryAdded(const char[] name)
+{
+	if(StrEqual(name, "Entity Events Queue"))
+	{
+		g_bEventQueue = true;
+	}
+}
 
 public void OnLibraryRemoved(const char[] name)
 {
@@ -538,8 +535,7 @@ stock int GetEntityFromAddress(Address pEntity) {
 	} else if ((offs_angRotation + 0x0C) != (offs_vecViewOffset - 0x04)) {
 		char game[32];
 		GetGameFolderName(game, sizeof(game));
-		ThrowError("Could not confirm offset of CBaseEntity::m_RefEHandle "
-				... "(incorrect assumption for game '%s'?)", game);
+		ThrowError("Could not confirm offset of CBaseEntity::m_RefEHandle (incorrect assumption for game '%s'?)", game);
 	}
 	
 	// offset seems right, cache it for the next call
