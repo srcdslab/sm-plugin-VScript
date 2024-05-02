@@ -46,7 +46,7 @@ stock int Vscripts_GetEntityIndexByName(const char[] name, const char[] classnam
 	return -1;
 }
 
-public int Vscripts_FindEntityByClassnameWithin(int startEnt, const char[] classname, const float[3] origin, const float radius)
+public int Vscripts_FindEntityByClassnameWithin(int startEnt, const char[] classname, const float origin[3], const float radius)
 {
 	float torigin[3];
 	while((startEnt = FindEntityByClassname(startEnt,classname))!= -1){
@@ -56,7 +56,7 @@ public int Vscripts_FindEntityByClassnameWithin(int startEnt, const char[] class
 	return -1;
 }
 
-public float Vscripts_TraceLine(const float[3] origin, const float[3] v2, int entity)
+public float Vscripts_TraceLine(const float origin[3], const float v2[3], int entity)
 {
 	TR_TraceRayFilter(origin, v2, MASK_NPCWORLDSTATIC, RayType_EndPoint, TraceEntityFilterSelf, entity);
 	float fraction_left = TR_GetFractionLeftSolid(INVALID_HANDLE), fraction = 0.0;
@@ -74,34 +74,34 @@ bool TraceEntityFilterSelf(int entity, int contentsMask, int data)
 	return Vscripts_TraceFilterSimple(entity, contentsMask, data);
 } 
 
-public void Vscripts_GetOrigin(int entity, float[3] buffer)
+public void Vscripts_GetOrigin(int entity, float buffer[3])
 {
 	GetEntPropVector(entity, Prop_Send, "m_vecOrigin", buffer);
 }
 
-public void Vscripts_GetAngles(int entity, float[3] buffer)
+public void Vscripts_GetAngles(int entity, float buffer[3])
 {
 	GetEntPropVector(entity, Prop_Send, "m_angRotation", buffer);
 }
 
-public void Vscripts_SetAngles(int entity, const float[3] buffer)
+public void Vscripts_SetAngles(int entity, const float buffer[3])
 {
 	TeleportEntity(entity, NULL_VECTOR, buffer, NULL_VECTOR);
 }
 
-public void Vscripts_SetOrigin(int entity, const float[3] buffer)
+public void Vscripts_SetOrigin(int entity, const float buffer[3])
 {
 	TeleportEntity(entity, buffer, NULL_VECTOR, NULL_VECTOR);
 }
 
-public void Vscripts_GetForwardVector(int entity, float[3] buffer)
+public void Vscripts_GetForwardVector(int entity, float buffer[3])
 {
 	float tmp[3];
 	Vscripts_GetAngles(entity, tmp);
 	GetAngleVectors(tmp, buffer, NULL_VECTOR, NULL_VECTOR);
 }
 
-public void Vscripts_SetForwardVector(int entity, const float[3] buffer)
+public void Vscripts_SetForwardVector(int entity, const float buffer[3])
 {
 	float tmp[3];
 	GetVectorAngles(buffer, tmp);
