@@ -8,10 +8,10 @@
 
 public Plugin myinfo = 
 {
-	name = "VScripts Core",
+	name = "Vscripts Core",
 	author = "Cloud Strife",
 	description = "",
-	version = "1.0.0",
+	version = "1.0.1",
 	url = "https://steamcommunity.com/id/cloudstrifeua/"
 };
 
@@ -79,19 +79,17 @@ enum Collision_Group_t
 
 methodmap VscriptTimer < StringMap 
 {
-	public VscriptTimer(Handle plugin, float time, VscriptTimerCallback cb, any data)
+	public VscriptTimer(PrivateForward cb_fwd, float time, any data)
 	{
 		StringMap myclass = new StringMap();
 		float trigger_time = GetGameTime() + time;
 		myclass.SetValue("m_fTriggerTime", trigger_time);
-		PrivateForward cb_fwd = new PrivateForward(ET_Ignore, Param_Any);
-		cb_fwd.AddFunction(plugin, cb);
 		myclass.SetValue("m_hCallback", cb_fwd);
 		myclass.SetValue("m_Data", data);
 		
 		bool inserted = false;
 		for(int i = 0; i < g_aVscriptTimers.Length; ++i)
-		{	
+		{
 			VscriptTimer cur = g_aVscriptTimers.Get(i);
 			float cur_t;
 			cur.GetValue("m_fTriggerTime", cur_t);
@@ -177,7 +175,23 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public any Native_CreateTimer(Handle plugin, int numParams)
 {
-	new VscriptTimer(plugin, view_as<float>(GetNativeCell(1)), view_as<VscriptTimerCallback>(GetNativeFunction(2)), GetNativeCell(3));
+	float time = view_as<float>(GetNativeCell(1));
+	Function callback = GetNativeFunction(2);
+	any data = GetNativeCell(3);
+
+	if (callback == INVALID_FUNCTION)
+	{
+		ThrowNativeError(SP_ERROR_NATIVE, "Native_CreateTimer received an invalid callback function");
+		return -1;
+	}
+
+	// Create a PrivateForward and add the callback function to it
+	PrivateForward cb_fwd = new PrivateForward(ET_Ignore, Param_Any);
+	cb_fwd.AddFunction(plugin, callback);
+
+	// Create a new VscriptTimer instance with the PrivateForward
+	new VscriptTimer(cb_fwd, time, data);
+	return 0;
 }
 
 public int Native_IsEventQueueLoaded(Handle plugin, int numParams)
