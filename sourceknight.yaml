@@ -10,12 +10,12 @@ project:
       - source: /addons
         dest: /addons
 
-    - name: ext-connect
+    - name: eventqueue
       type: git
-      repo: https://github.com/srcdslab/sm-ext-connect
+      repo: https://github.com/srcdslab/sm-ext-eventqueue
       unpack:
-      - source: /addons
-        dest: /addons
+      - source: /include
+        dest: /addons/sourcemod/scripting/include
 
   root: /
   output: /addons/sourcemod/plugins
